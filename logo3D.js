@@ -27,10 +27,10 @@ function checkKey(e) {
 //mouse event
 var windowHalfX = window.innerWidth / 2;
 var windowHalfY = window.innerHeight / 2;
-var mouseX,mouseY;
-document.addEventListener( 'mousemove', onDocumentMouseMove, false );
+var mouseX, mouseY;
+document.addEventListener('mousemove', onDocumentMouseMove, false);
 
-function onDocumentMouseMove( event ) {
+function onDocumentMouseMove(event) {
 
     mouseX = ( event.clientX - windowHalfX );
     mouseY = ( event.clientY - windowHalfY );
@@ -43,15 +43,23 @@ window.onload = function () {
 
     var scene = new THREE.Scene();
     //set camera
-    var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    var camera = new THREE.PerspectiveCamera(75,
+        (config3d.rendererSize ? config3d.rendererSize.width : window.innerWidth) /
+        (config3d.rendererSize ? config3d.rendererSize.height : window.innerHeight),
+        0.1,
+        1000
+    );
     camera.position.z = 5;
 
     //set renderer
     var renderer = new THREE.WebGLRenderer({antialias: true, alpha: config3d.transparentBackground});
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    if(config3d.elementId){
+    renderer.setSize(
+        config3d.rendererSize ? config3d.rendererSize.width : window.innerWidth,
+        config3d.rendererSize ? config3d.rendererSize.height : window.innerHeight
+    );
+    if (config3d.elementId) {
         document.getElementById(element).appendChild(renderer.domElement);
-    }else{
+    } else {
         document.body.appendChild(renderer.domElement);
     }
 
@@ -167,12 +175,12 @@ window.onload = function () {
     function render() {
         // console.log('(',mouseX,':',mouseY,')' );
         //add inertia to the logo according the mouse
-        if(logo && mouseY*mouseY < config3d.mouseProximity && mouseX*mouseX < config3d.mouseProximity){
-            if(logo.position.z <config3d.mouseMaxProximity){
+        if (logo && mouseY * mouseY < config3d.mouseProximity && mouseX * mouseX < config3d.mouseProximity) {
+            if (logo.position.z < config3d.mouseMaxProximity) {
                 logo.position.z += config3d.mouseSpeed;
             }
-        }else{
-            if(logo && logo.position.z>0){
+        } else {
+            if (logo && logo.position.z > 0) {
                 logo.position.z -= config3d.mouseSpeed;
             }
         }
