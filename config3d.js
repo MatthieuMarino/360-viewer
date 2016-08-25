@@ -8,27 +8,24 @@ var config3d = {
     //SCENE PROPERTIES
     transparentBackground : false, // choose if the background is transparent
     lightsIntensity : 3, // change light intensity
+    ambientLight : true, //on/off the ambient light
+
 
     //FILE : model handling, stl format only
     filePath : "../models/", //path to the model files
-    // file : 'and', //used to force the file displayed, ignoring fileList
-    //used to display a file at random
-    fileList : ['file2','file3','file4','file5','file6','file7','file8','file9','file10','file11','file12','file13'],
 
     //COLOR : color of the logo
     // color : '#640003', // change the color, ignore colorList
     colorList : ['#74c8f0', '#f7ec5c', '#640003'], //choose a color at random
 
     //SLIDER
-    // slider1 : 'slide1.jpg', //used to force the slider displayed, ignoring sliderList
-    // slider2 : 'slide2.jpg', //used to force the slider displayed, ignoring sliderList
     sliderPath : "../sliderImages/", //path to the slider image
-    sliderList : ['slide1.jpg', 'slide2.jpg', 'slide3.jpg', 'slide4.jpg', 'slide5.jpg'],
     slideSize : 10, //change size of slider image
     sliderSpeed : 0.1, //set the speed of the sliders
 
 
     //Group images
+    //all members are optionnals
     //possible members of a group not already included :
     //position: {x,y,z} // setup the initial position of the object, override the default value
     //translate: 0 // same a global translate but only for this group
@@ -39,7 +36,7 @@ var config3d = {
             slider2: 'slide1_droit.jpg',
             model: 'file13',
             color: '#af3034',
-            position: {x:-1.8,y:0.8,z:0}
+            position: {x:-1.8,y:0.8}
         },
         {
             slider1: 'slide2_gauche.jpg',
@@ -52,7 +49,8 @@ var config3d = {
             slider1: 'slide3_gauche.jpg',
             slider2: 'slide3_droit.jpg',
             model: 'file6',
-            color: '#640003'
+            color: '#640003',
+            position: {y:1.7}
         },
         {
             slider1: 'slide4_gauche.svg',
