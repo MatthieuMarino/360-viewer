@@ -1,5 +1,6 @@
-var logoConf = config3d.group[Math.floor(Math.random() * config3d.group.length)];
 var newGroup;
+
+//keyboard events change the scene
 document.onkeydown = checkKey;
 
 function checkKey(e) {
@@ -20,6 +21,19 @@ function checkKey(e) {
     //     // right arrow
     // }
     newGroup(config3d.group[Math.floor(Math.random() * config3d.group.length)]);
+
+}
+
+//mouse event
+var windowHalfX = window.innerWidth / 2;
+var windowHalfY = window.innerHeight / 2;
+var mouseX,mouseY;
+document.addEventListener( 'mousemove', onDocumentMouseMove, false );
+
+function onDocumentMouseMove( event ) {
+
+    mouseX = ( event.clientX - windowHalfX );
+    mouseY = ( event.clientY - windowHalfY );
 
 }
 
@@ -143,10 +157,23 @@ window.onload = function () {
         })
     };
 
-    newGroup(logoConf);
+    //initialise the display
+    newGroup(config3d.group[Math.floor(Math.random() * config3d.group.length)]);
 
     //launch refresh loop
     function render() {
+        // console.log('(',mouseX,':',mouseY,')' );
+        //add inertia to the logo according the mouse
+        if(logo && mouseY*mouseY < config3d.mouseProximity && mouseX*mouseX < config3d.mouseProximity){
+            if(logo.position.z <config3d.mouseMaxProximity){
+                logo.position.z += config3d.mouseSpeed;
+            }
+        }else{
+            if(logo && logo.position.z>0){
+                logo.position.z -= config3d.mouseSpeed;
+            }
+        }
+        //animate
         requestAnimationFrame(render);
         if (logo && rotated < config3d.rotationMax) {
             // console.log('rotated', rotated);

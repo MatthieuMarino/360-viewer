@@ -5,6 +5,11 @@ var config3d = {
     rotation : 0.03, // change rotation speed
     rotationMax : 6.28, // set a stop to rotation, probably in radians
 
+    //MOUSE controlled logo inertia
+    mouseProximity : 10000, // define the squared proximity where the logo is affected
+    mouseMaxProximity : 1, //define how close the logo can be
+    mouseSpeed : 0.01, //define of movement of the logo
+
     //SCENE PROPERTIES
     transparentBackground : false, // choose if the background is transparent
     lightsIntensity : 3, // change light intensity
