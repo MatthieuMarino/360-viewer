@@ -14,7 +14,11 @@ var config3d = {
     transparentBackground : false, // choose if the background is transparent
     lightsIntensity : 3, // change light intensity
     ambientLight : true, //on/off the ambient light
+    // rendererSize: {width : window.innerWidth, height : window.innerHeight}, //setup the size of the openGL renderer
 
+    //DOM
+    //warning, don't touch this one if you don't know what you are doing
+    // elementId: 'idElement', //set the id of the element where the renderer is gonna be append
 
     //FILE : model handling, stl format only
     filePath : "../models/", //path to the model files

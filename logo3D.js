@@ -49,8 +49,11 @@ window.onload = function () {
     //set renderer
     var renderer = new THREE.WebGLRenderer({antialias: true, alpha: config3d.transparentBackground});
     renderer.setSize(window.innerWidth, window.innerHeight);
-    // document.getElementById('logoCanva').appendChild(renderer.domElement);
-    document.body.appendChild(renderer.domElement);
+    if(config3d.elementId){
+        document.getElementById(element).appendChild(renderer.domElement);
+    }else{
+        document.body.appendChild(renderer.domElement);
+    }
 
     //add lights at both side of the logo to brighten the scene and add shadows
     // var sphere = new THREE.SphereGeometry( 0.5, 16, 8 );
