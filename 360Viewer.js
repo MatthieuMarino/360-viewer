@@ -41,8 +41,10 @@ function checkKey(e) {
         rotation.x = 0;
         rotation.y = 0;
         rotation.z = 0;
+        lastDioramaInterval = Date.now();
     }else if (e.keyCode == '17'){
         keyboardMode = !keyboardMode;
+        lastDioramaInterval = Date.now();
     }
     // newGroup(config360.group[Math.floor(Math.random() * config360.group.length)]);
     //     console.log('rotation', rotation);
@@ -63,8 +65,6 @@ var targetRotationOnMouseDownY = 0;
 var mouseXOnMouseDown = 0;
 var mouseYOnMouseDown = 0;
 var finalRotationY;
-
-document.addEventListener('mousemove', onDocumentMouseMove, false);
 
 
 function enclosed(data, min, max) {
@@ -92,6 +92,8 @@ function onDocumentMouseDown( event ) {
 
     mouseYOnMouseDown = event.clientY - windowHalfY;
     targetRotationOnMouseDownY = targetRotationY;
+
+    lastDioramaInterval = Date.now();
 
 }
 
@@ -149,6 +151,8 @@ function onDocumentTouchMove( event ) {
         mouseY = event.touches[ 0 ].pageY - windowHalfY;
         targetRotationY = targetRotationOnMouseDownY + (mouseY - mouseYOnMouseDown) * 0.05;
 
+        // lastDioramaInterval = Date.now();
+
     }
 
 }
@@ -173,6 +177,8 @@ nextImage = function () {
         index = 0;
     }
     newImage(config360.diorama[index]);
+    // console.log('config360.diorama[index]', config360.diorama[index]);
+    lastDioramaInterval = Date.now();
 };
 
 previousImage  = function(){
@@ -181,6 +187,7 @@ previousImage  = function(){
         index = config360.diorama.length-1;
     }
     newImage(config360.diorama[index]);
+    lastDioramaInterval = Date.now();
 };
 
 window.onload = function () {
@@ -251,6 +258,7 @@ window.onload = function () {
                 scene.add(light);
             }
             // })
+            lastDioramaInterval = Date.now();
         }
         else {
             console.log('No image');
@@ -273,11 +281,11 @@ window.onload = function () {
 
         //animate
         requestAnimationFrame(render);
-        // if (sphere && rotated < config360.rotationMax) {
-        //     // console.log('rotated', rotated);
-        //     rotated += config360.rotation;
-        //     sphere.rotation.y += config360.rotation;
-        // }
+
+        //progress diorama
+        if(Date.now() - lastDioramaInterval > config360.dioramaInterval*1000){
+            nextImage();
+        }
 
         //mouse rotation
         if(!keyboardMode){//horizontal rotation

@@ -67,15 +67,6 @@ var mouseXOnMouseDown = 0;
 var mouseYOnMouseDown = 0;
 var finalRotationY;
 
-document.addEventListener('mousemove', onDocumentMouseMove, false);
-function onDocumentMouseMove(event) {
-
-    mouseX = ( event.clientX - windowHalfX );
-    mouseY = ( event.clientY - windowHalfY );
-
-}
-
-
 function enclosed(data, min, max) {
     if (data <= min) {
         return min
@@ -90,7 +81,7 @@ function enclosed(data, min, max) {
 var windowHalfX = window.innerWidth / 2;
 var windowHalfY = window.innerHeight / 2;
 var mouseX, mouseY;
-document.addEventListener('mousemove', onDocumentMouseMove, false);
+// document.addEventListener('mousemove', onDocumentMouseMove, false);
 
 function onDocumentMouseDown(event) {
 

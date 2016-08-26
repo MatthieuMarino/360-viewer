@@ -19,6 +19,6 @@ var config360 = {
         '../images/R0010236.jpg','../images/R0010237.jpg','../images/R0010238.jpg','../images/R0010239.jpg',
         '../images/R0010240.jpg','../images/R0010241.jpg','../images/R0010242.jpg','../images/R0010243.jpg',
         '../images/R0010244.jpg'], //list of file
-    dioramaInterval : 2 // interval in seconds
+    dioramaInterval : 6 // interval in seconds
 
 };
