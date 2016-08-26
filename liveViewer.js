@@ -1,6 +1,4 @@
-var newImage, scene, camera, video, videoImage, videoImageContext, videoTexture, movieScreen, getVideo;
-//ricoh data //tried to get live feed from device but didn't work as intended, and CORS...
-var sessionId, getState, lastContact, status, newStatus, checkingStatus, capturing;
+var newImage, scene, camera, video, videoImage, videoImageContext, videoTexture, movieScreen, newVideo;
 
 var rotation = {x: 0, y: 0, z: 0};
 var width = config360.rendererSize ? config360.rendererSize.width : window.innerWidth;
@@ -261,89 +259,9 @@ window.onload = function () {
 
     };
 
-    getVideo = function () {
-
-
-        console.log('Preparing to connect');
-        $.ajax({
-            type: 'POST',
-            url: 'http://192.168.1.1:80/osc/commands/execute',
-            data: {
-                "name": "camera.startSession"
-            },
-            success: function (res) {
-                console.log('Session created');
-                if (res.state == 'done') {
-                    sessionId = res.sessionId;
-                    lastContact = Date.now();
-                    $.ajax({
-                        type: 'POST',
-                        url: 'http://192.168.1.1:80/osc/commands/execute',
-                        data: {
-                            "name": "camera.setOptions",
-                            "parameters": {
-                                "sessionId": sessionId,
-                                "options": {
-                                    "clientVersion": 2.1
-                                }
-                            }
-                        },
-                        success: function (answer) {
-                            console.log('Options sent');
-                            if (answer.state == 'done') {
-                                lastContact = Date.now();
-                                var connection = $.ajax({
-                                    type: 'POST',
-                                    url: 'http://192.168.1.1:80/osc/commands/execute',
-                                    data: {
-                                        "name": "camera.getLivePreview"
-                                    },
-                                    success: function (answer) {
-                                        console.log('preview launched');
-                                        if (answer.state == 'inProgress') {
-                                            lastContact = Date.now();
-                                            capturing = true;
-                                            console.log('answer', answer);
-                                        }
-                                    }
-                                });
-
-                                connection.addEventListener('readystatechange', function (videopart) {
-                                    video = videopart;
-                                })
-                            }
-                        }
-                    });
-                }
-            }
-        });
-    };
-
-    getState = function () {
-        checkingStatus = true;
-        $.ajax({
-            type: 'POST',
-            url: 'http://192.168.1.1:80/osc/state',
-            success: function (res) {
-                newStatus = false;
-                checkingStatus = false;
-                status = res;
-                lastContact = Date.now();
-            }
-        });
-    };
-
-    checkStatus = function () {
-        if (!checkingStatus) {
-            $.ajax({
-                type: 'POST',
-                url: 'http://192.168.1.1:80/osc//checkForUpdates',
-                success: function (res) {
-                    if (status.stateFingerprint == res.stateFingerprint) {
-                        newStatus = true;
-                    }
-                }
-            });
+    newVideo = function(videoURL){
+        if(videoURL){
+            video.src = videoURL;
         }
     };
 
@@ -391,8 +309,5 @@ window.onload = function () {
     render();
 
 
-    window.onunload = function(){
-        //set stop capture here if you should
-    }
 }
 ;
