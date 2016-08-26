@@ -23,14 +23,26 @@ app.set('port', port);
 
 app.use(express.static(config.path));
 
-app.get('/:name', function (req, res) {
-    console.log((new Date()).toUTCString(), ':> file request');
-    res.sendFile('./' + req.params.name);
-});
+// app.get('/:name', function (req, res, next) {
+//     // console.log('req.params.name', req.params.name);
+//     // if(req.params.name == 'live' || req.params.name == 'ping'){
+//     //     next();
+//     // }else if (req.params.name == 'favicon.ico') {
+//     //     res.sendFile('./'+req.params.name);
+//     // } else {
+//     console.log((new Date()).toUTCString(), ':> file request');
+//     res.sendFile('./' + req.params.name);
+//     // }
+// });
 
 app.get('/', function (req, res) {
     console.log((new Date()).toUTCString(), ':> site request');
     res.sendFile('./index.html');
+});
+
+app.get('/live', function (req, res) {
+    console.log((new Date()).toUTCString(), ':> alt site request');
+    res.sendFile('./index2.html');
 });
 
 app.get('/ping', function (req, res) {

@@ -5,6 +5,8 @@ var width = config360.rendererSize ? config360.rendererSize.width : window.inner
 var height = config360.rendererSize ? config360.rendererSize.height : window.innerHeight;
 
 var keyboardMode = false;
+var index = 0;
+var nextImage, previousImage, lastDioramaInterval;
 
 //keyboard events change the scene
 document.onkeydown = checkKey;
@@ -25,10 +27,16 @@ function checkKey(e) {
     else if (e.keyCode == '37') {
         // left arrow
         rotation.y = enclosed(rotation.y - config360.speedIncrement, config360.minSpeed, config360.maxSpeed);
+        if(!keyboardMode){
+            nextImage();
+        }
     }
     else if (e.keyCode == '39') {
         // right arrow
         rotation.y = enclosed(rotation.y + config360.speedIncrement, config360.minSpeed, config360.maxSpeed);
+        if(!keyboardMode){
+            previousImage();
+        }
     } else if (e.keyCode == '32') {
         rotation.x = 0;
         rotation.y = 0;
@@ -45,6 +53,7 @@ var windowHalfX = window.innerWidth / 2;
 var windowHalfY = window.innerHeight / 2;
 var mouseX, mouseY;
 
+
 var targetRotationX = 0;
 var targetRotationOnMouseDownX = 0;
 
@@ -56,12 +65,6 @@ var mouseYOnMouseDown = 0;
 var finalRotationY;
 
 document.addEventListener('mousemove', onDocumentMouseMove, false);
-function onDocumentMouseMove(event) {
-
-    mouseX = ( event.clientX - windowHalfX );
-    mouseY = ( event.clientY - windowHalfY );
-
-}
 
 
 function enclosed(data, min, max) {
@@ -74,11 +77,7 @@ function enclosed(data, min, max) {
     }
 }
 
-//mouse event
-var windowHalfX = window.innerWidth / 2;
-var windowHalfY = window.innerHeight / 2;
-var mouseX, mouseY;
-document.addEventListener('mousemove', onDocumentMouseMove, false);
+
 
 function onDocumentMouseDown( event ) {
 
@@ -168,6 +167,22 @@ function onWindowResize() {
 
 }
 
+nextImage = function () {
+    index++;
+    if(index>=config360.diorama.length){
+        index = 0;
+    }
+    newImage(config360.diorama[index]);
+};
+
+previousImage  = function(){
+    index--;
+    if(index < 0){
+        index = config360.diorama.length-1;
+    }
+    newImage(config360.diorama[index]);
+};
+
 window.onload = function () {
     // var rotated = 0;
 
@@ -249,7 +264,8 @@ window.onload = function () {
     };
 
     //initialise the display
-    newImage('../images/R0010232.jpg');
+    newImage(config360.diorama[0]);
+    // nextImage();
 
     //launch refresh loop
     function render() {

@@ -14,5 +14,11 @@ var config360 = {
     //warning, don't touch this one if you don't know what you are doing
     // elementId: 'idElement', //set the id of the element where the renderer is gonna be append
 
+    //Gallerie
+    diorama : ['../images/R0010232.jpg','../images/R0010233.jpg','../images/R0010234.jpg','../images/R0010235.jpg',
+        '../images/R0010236.jpg','../images/R0010237.jpg','../images/R0010238.jpg','../images/R0010239.jpg',
+        '../images/R0010240.jpg','../images/R0010241.jpg','../images/R0010242.jpg','../images/R0010243.jpg',
+        '../images/R0010244.jpg'], //list of file
+    dioramaInterval : 2 // interval in seconds
 
 };
