@@ -37,7 +37,7 @@ function checkKey(e) {
         rotation.y = enclosed(rotation.y + config360.speedIncrement, config360.minSpeed, config360.maxSpeed);
         if(!keyboardMode){
             if(video.paused){
-            video.play();
+                video.play();
             }else{
                 video.stop();
             }
@@ -219,8 +219,6 @@ window.onload = function () {
     videoTexture = new THREE.Texture(videoImage);
     videoTexture.minFilter = THREE.LinearFilter;
     videoTexture.magFilter = THREE.LinearFilter;
-
-    var loader = THREE.TextureLoader();
 
     var geometry = new THREE.SphereGeometry(40, 32, 16);
 
