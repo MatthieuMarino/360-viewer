@@ -15,13 +15,15 @@ var config360 = {
     // elementId: 'idElement', //set the id of the element where the renderer is gonna be append
 
     //Gallerie
-    diorama : [{image:true,src:'../images/R0010232.jpg'},{image:true,src:'../images/R0010233.jpg'},
+    diorama : [
+        {image:true,src:'../images/R0010232.jpg'},{image:true,src:'../images/R0010233.jpg'},
         {image:true,src:'../images/R0010234.jpg'},{image:true,src:'../images/R0010235.jpg'},
         {image:true,src:'../images/R0010236.jpg'},{image:true,src:'../images/R0010237.jpg'},
         {image:true,src:'../images/R0010238.jpg'},{image:true,src:'../images/R0010239.jpg'},
         {image:true,src:'../images/R0010240.jpg'},{image:true,src:'../images/R0010241.jpg'},
         {image:true,src:'../images/R0010242.jpg'},{image:true,src:'../images/R0010243.jpg'},
-        {image:true,src:'../images/R0010244.jpg'}, {video:true,src:'../images/R0010245_er.MP4'}], //list of file
+        {image:true,src:'../images/R0010244.jpg'},
+        {video:true,src:'../images/R0010245_er.MP4'}], //list of file
     dioramaInterval : 6 // interval in seconds
 
 };

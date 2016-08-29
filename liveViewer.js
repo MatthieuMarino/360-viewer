@@ -223,7 +223,7 @@ window.onload = function () {
     var geometry = new THREE.SphereGeometry(40, 32, 16);
 
     //create the sphere material
-    var movieMaterial = new THREE.MeshBasicMaterial({map: videoTexture, overdraw: true, side: THREE.DoubleSide});
+    var movieMaterial = new THREE.MeshBasicMaterial({map: videoTexture, overdraw: true, side: THREE.BackSide});
     // the geometry on which the movie will be displayed;
     // 		movie image will be scaled to fit these dimensions.
     // var geometry = new THREE.SphereGeometry( 0.5, 16, 8 );

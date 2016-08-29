@@ -1,4 +1,5 @@
-var updateImage, scene, camera, video, videoImage, videoImageContext, sphere, newVideo, material, texture;
+var updateImage, renderer, scene, camera, video, videoImage, videoImageContext, sphere, material, texture;
+var newVideo = true;
 
 var rotation = {x: 0, y: 0, z: 0};
 var width = config360.rendererSize ? config360.rendererSize.width : window.innerWidth;
@@ -23,6 +24,13 @@ function checkKey(e) {
     else if (e.keyCode == '40') {
         // down arrow
         rotation.x = enclosed(rotation.x - config360.speedIncrement, config360.minSpeed, config360.maxSpeed);
+        if (!keyboardMode && video && imageType) {
+            if (video.paused) {
+                video.play();
+            } else {
+                video.pause();
+            }
+        }
     }
     else if (e.keyCode == '37') {
         // left arrow
@@ -178,10 +186,11 @@ nextImage = function () {
     if (index >= config360.diorama.length) {
         index = 0;
     }
-    if(config360.diorama[index].video){
+    if (config360.diorama[index].video) {
+        console.log('video');
         newVideo = true;
     }
-    if(video){
+    if (video) {
         video.pause();
     }
     updateImage(config360.diorama[index]);
@@ -194,10 +203,11 @@ previousImage = function () {
     if (index < 0) {
         index = config360.diorama.length - 1;
     }
-    if(config360.diorama[index].video){
+    if (config360.diorama[index].video) {
+        console.log('video');
         newVideo = true;
     }
-    if(video){
+    if (video) {
         video.pause();
     }
     updateImage(config360.diorama[index]);
@@ -210,11 +220,11 @@ window.onload = function () {
 
     // var scene = new THREE.Scene();
     //set camera
-    var camera = new THREE.PerspectiveCamera(75, (width) / (height), 0.1, 1000);
+    camera = new THREE.PerspectiveCamera(75, (width) / (height), 0.1, 1000);
     camera.position.z = 5;
 
     //set renderer
-    var renderer = new THREE.WebGLRenderer({antialias: true, alpha: config360.transparentBackground});
+    renderer = new THREE.WebGLRenderer({antialias: true, alpha: config360.transparentBackground});
     renderer.setSize(width, height);
     if (config360.elementId) {
         document.getElementById(element).appendChild(renderer.domElement);
@@ -240,19 +250,29 @@ window.onload = function () {
     var geometry = new THREE.SphereGeometry(40, 32, 16);
     scene = new THREE.Scene();
     // texture = new THREE.Texture();
+
     //function to change the image displayed
     updateImage = function (input) {
         // console.log('input', input);
+
+        //handle the case when the image is still
         if (input && input.image) {
             imageType = false;
             //load and render the sphere and i know it's deprecated but between something that doesn't work and somthing that does...
-            if(!material){
-                material = new THREE.MeshBasicMaterial({map: THREE.ImageUtils.loadTexture(input.src), overdraw: true, side: THREE.BackSide});
-            }else{
+            if (!material) {
+                material = new THREE.MeshBasicMaterial({
+                    map: THREE.ImageUtils.loadTexture(input.src),
+                    overdraw: true,
+                    side: THREE.BackSide
+                });
+            } else {
                 material.map = THREE.ImageUtils.loadTexture(input.src);
                 // console.log('texture', texture);
             }
+            material.map.wrapS = THREE.RepeatWrapping;
+            material.map.repeat.x = - 1;
             material.needsUpdate = true;
+            //handle the case when the image is from a video
         } else if (input && input.video) {
             imageType = true;
             if (!video || newVideo) {
@@ -270,25 +290,31 @@ window.onload = function () {
                 // background color as placeholder
                 videoImageContext.fillStyle = '#000000';
                 videoImageContext.fillRect(0, 0, videoImage.width, videoImage.height);
+            }
 
-                // set texture
-                texture = new THREE.Texture(videoImage);
-                texture.minFilter = THREE.LinearFilter;
-                texture.magFilter = THREE.LinearFilter;
+            // set texture
+            texture = new THREE.Texture(videoImage);
+            texture.minFilter = THREE.LinearFilter;
+            texture.magFilter = THREE.LinearFilter;
+            texture.wrapS = THREE.RepeatWrapping;
+            texture.repeat.x = - 1;
 
-                if(material){
-                    material.map = texture;
-                }else{
-                    material = new THREE.MeshBasicMaterial({map: texture, overdraw: true, side: THREE.BackSide});
-                    if(sphere){
-                        sphere.material = material;
-                    }
+            //update texture with the current frame
+            if (material) {
+                material.map = texture;
+            } else {
+                material = new THREE.MeshBasicMaterial({map: texture, overdraw: true, side: THREE.BackSide});
+                if (sphere) {
+                    sphere.material = material;
+                    shpere.needsUpdate = true;
                 }
             }
-            if (video.readyState === video.HAVE_ENOUGH_DATA) {
-                videoImageContext.drawImage(video, 0, 0);
-                material.needsUpdate = true;
-            }
+            material.needsUpdate = true;
+            // if (video.readyState === video.HAVE_ENOUGH_DATA) {
+            //     console.log('enough state');
+            // videoImageContext.drawImage(video, 0, 0);
+            // material.needsUpdate = true;
+            // }
         }
         else {
             console.log('No input');
@@ -301,7 +327,7 @@ window.onload = function () {
     updateImage(config360.diorama[0]);
     // nextImage();
 
-    if(!sphere){
+    if (!sphere) {
         sphere = new THREE.Mesh(geometry, material);
     }
 
@@ -319,7 +345,7 @@ window.onload = function () {
         }
     };
 
-
+    //listen to mouse events
     document.addEventListener('mousedown', onDocumentMouseDown, false);
     document.addEventListener('touchstart', onDocumentTouchStart, false);
     document.addEventListener('touchmove', onDocumentTouchMove, false);
@@ -333,7 +359,7 @@ window.onload = function () {
         //animate
         requestAnimationFrame(render);
 
-        if(imageType){
+        if (imageType) {
             if (video.readyState === video.HAVE_ENOUGH_DATA) {
                 videoImageContext.drawImage(video, 0, 0);
                 material.needsUpdate = true;
