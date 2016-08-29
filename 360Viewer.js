@@ -1,4 +1,4 @@
-var updateImage, renderer, scene, camera, video, videoImage, videoImageContext, sphere, material, texture;
+var updateImage, renderer, scene, camera, video, videoImage, videoImageContext, sphere, material, texture, videoPlaying;
 var newVideo = true;
 
 var rotation = {x: 0, y: 0, z: 0};
@@ -187,9 +187,10 @@ nextImage = function () {
         index = 0;
     }
     if (config360.diorama[index].video) {
-        console.log('video');
+        // console.log('video');
         newVideo = true;
     }
+    videoPlaying = false;
     if (video) {
         video.pause();
     }
@@ -204,9 +205,10 @@ previousImage = function () {
         index = config360.diorama.length - 1;
     }
     if (config360.diorama[index].video) {
-        console.log('video');
+        // console.log('video');
         newVideo = true;
     }
+    videoPlaying = false;
     if (video) {
         video.pause();
     }
@@ -218,7 +220,7 @@ window.onload = function () {
     // var rotated = 0;
 
 
-    // var scene = new THREE.Scene();
+    scene = new THREE.Scene();
     //set camera
     camera = new THREE.PerspectiveCamera(75, (width) / (height), 0.1, 1000);
     camera.position.z = 5;
@@ -233,12 +235,13 @@ window.onload = function () {
     }
 
     //add light at the center to brighten the scene
-    // var sphere = new THREE.SphereGeometry( 0.5, 16, 8 );
+    // // var sphere = new THREE.SphereGeometry( 0.5, 16, 8 );
     // var light1 = new THREE.PointLight(0x404040, config360.lightsIntensity, 0);
     // // light1.add( new THREE.Mesh( sphere, new THREE.MeshBasicMaterial( { color: 0xff0040 } ) ) );
     // light1.position.y = 0;
     // light1.position.z = 0;
     // light1.position.x = 0;
+    // scene.add(light1);
 
     //ambient light
     if (config360.ambientLight) {
@@ -248,7 +251,6 @@ window.onload = function () {
     // var loader = THREE.TextureLoader();
 
     var geometry = new THREE.SphereGeometry(40, 32, 16);
-    scene = new THREE.Scene();
     // texture = new THREE.Texture();
 
     //function to change the image displayed
@@ -258,58 +260,83 @@ window.onload = function () {
         //handle the case when the image is still
         if (input && input.image) {
             imageType = false;
-            //load and render the sphere and i know it's deprecated but between something that doesn't work and somthing that does...
+            //load and render the sphere and i know it's deprecated but between something that doesn't work and something that does...
             if (!material) {
                 material = new THREE.MeshBasicMaterial({
                     map: THREE.ImageUtils.loadTexture(input.src),
                     overdraw: true,
                     side: THREE.BackSide
                 });
+                //flip image horizontally
+                material.map.wrapS = THREE.RepeatWrapping;
+                material.map.repeat.x = - 1;
             } else {
-                material.map = THREE.ImageUtils.loadTexture(input.src);
+                sphere.material.map = THREE.ImageUtils.loadTexture(input.src);
                 // console.log('texture', texture);
+                //flip image horizontally
+                sphere.material.map.wrapS = THREE.RepeatWrapping;
+                sphere.material.map.repeat.x = - 1;
+                //mark for update
+                sphere.material.needsUpdate = true;
             }
-            material.map.wrapS = THREE.RepeatWrapping;
-            material.map.repeat.x = - 1;
-            material.needsUpdate = true;
+
             //handle the case when the image is from a video
         } else if (input && input.video) {
             imageType = true;
             if (!video || newVideo) {
                 // console.log('newVideo', newVideo);
                 newVideo = false;
+
+                if(video){
+                    video.removeEventListener('ended');
+                }
                 //create video element and configure
                 video = document.createElement('video');
+                // console.log('input.src', input.src);
                 video.src = input.src;
                 video.autoplay = true;
+                // document.body.appendChild(video); //test only
                 videoImage = document.createElement('canvas');
                 videoImage.width = 1920;
                 videoImage.height = 960;
                 videoImageContext = videoImage.getContext('2d');
 
                 // background color as placeholder
-                videoImageContext.fillStyle = '#000000';
+                videoImageContext.fillStyle = '#003300';
                 videoImageContext.fillRect(0, 0, videoImage.width, videoImage.height);
+
+                video.addEventListener('ended', function(){
+                    videoPlaying = false;
+                })
+            }
+
+            if(!video.error){
+                videoPlaying = true;
             }
 
             // set texture
             texture = new THREE.Texture(videoImage);
             texture.minFilter = THREE.LinearFilter;
             texture.magFilter = THREE.LinearFilter;
+            // flip image horizontally
             texture.wrapS = THREE.RepeatWrapping;
             texture.repeat.x = - 1;
 
-            //update texture with the current frame
-            if (material) {
-                material.map = texture;
-            } else {
+            //update mesh with the current texture
+            // if (sphere && sphere.material) {
+            //     sphere.material.map = texture;
+            //     //mark for update
+            //     sphere.material.needsUpdate = true;
+            // } else {
                 material = new THREE.MeshBasicMaterial({map: texture, overdraw: true, side: THREE.BackSide});
                 if (sphere) {
                     sphere.material = material;
-                    shpere.needsUpdate = true;
+                    sphere.needsUpdate = true;
                 }
-            }
-            material.needsUpdate = true;
+                //mark for update
+                material.needsUpdate = true;
+            // }
+
             // if (video.readyState === video.HAVE_ENOUGH_DATA) {
             //     console.log('enough state');
             // videoImageContext.drawImage(video, 0, 0);
@@ -358,16 +385,19 @@ window.onload = function () {
 
         //animate
         requestAnimationFrame(render);
+    // console.log('imageType', imageType);
 
+        //updating the video frame and displaying it
         if (imageType) {
+            // console.log('video', video);
             if (video.readyState === video.HAVE_ENOUGH_DATA) {
                 videoImageContext.drawImage(video, 0, 0);
-                material.needsUpdate = true;
+                sphere.material.map.needsUpdate = true;
             }
         }
 
-        //progress diorama
-        if (Date.now() - lastDioramaInterval > config360.dioramaInterval * 1000) {
+        //progress diorama (except when a video is playing
+        if (Date.now() - lastDioramaInterval > config360.dioramaInterval * 1000 && (!imageType || (imageType && !videoPlaying))) {
             nextImage();
         }
 
@@ -399,7 +429,11 @@ window.onload = function () {
         }
 
         // console.log('camera.position', camera.position);
+
+        //mark camera position for update
         camera.updateProjectionMatrix();
+
+        //send all data to the renderer
         renderer.render(scene, camera);
     }
 

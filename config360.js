@@ -7,7 +7,7 @@ var config360 = {
     //SCENE PROPERTIES
     transparentBackground : false, // choose if the background is transparent
     lightsIntensity : 3, // change light intensity
-    ambientLight : true, //on/off the ambient light
+    ambientLight : false, //on/off the ambient light
     // rendererSize: {width : window.innerWidth, height : window.innerHeight}, //setup the size of the openGL renderer
 
     //DOM

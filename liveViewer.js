@@ -39,7 +39,7 @@ function checkKey(e) {
             if(video.paused){
                 video.play();
             }else{
-                video.stop();
+                video.pause();
             }
         }
     } else if (e.keyCode == '32') {
